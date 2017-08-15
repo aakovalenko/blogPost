@@ -38,6 +38,11 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
+    <div class="alert alert-info" role="alert">
+        If you aren't register, please  <a href="../site/signup" class="alert-link">Sign app</a>
+    </div>
+
+
     <?php ActiveForm::end(); ?>
 
     <div class="col-lg-offset-1" style="color:#999;">
