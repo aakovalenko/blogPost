@@ -124,10 +124,7 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
-    public function actionSignup()
-    {
-        return $this->render('signup');
-    }
+
 
     public function actionSignup()
     {

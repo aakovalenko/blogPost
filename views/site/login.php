@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
     <div class="alert alert-info" role="alert">
-        If you aren't register, please  <a href="../site/signup" class="alert-link">Sign app</a>
+        If you aren't register, please  <a href="../site/signup" class="alert-link">Signup</a>
     </div>
 
 

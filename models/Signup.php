@@ -14,16 +14,17 @@ use app\models\User;
 
 class Signup extends Model
 {
+    public $username;
     public $email;
-    public $password;
+    public $password_hash;
 
     public function rules()
     {
         return [
-            [['email', 'password'],'required'],
+            [['email', 'password_hash', 'username'],'required'],
             ['email','email'],
             ['email','unique','targetClass' => 'app\models\User'],
-            ['password', 'string', 'min'=>2, 'max'=>10]
+            ['password_hash', 'string', 'min'=>2, 'max'=>10]
 
         ];
     }
@@ -32,8 +33,17 @@ class Signup extends Model
     {
         $user = new User();
 
+        $user->username = $this->username;
         $user->email = $this->email;
-        $user->setPassword($this->password);
+        $user->setPassword($this->password_hash);
         return $user->save();
+    }
+
+    public function attributeLabels()
+    {
+        return [
+          'username' => 'Имя',
+          'password_hash' => 'Пароль',
+        ];
     }
 }
