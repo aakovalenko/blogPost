@@ -24,7 +24,8 @@ class Signup extends Model
             [['email', 'password_hash', 'username'],'required'],
             ['email','email'],
             ['email','unique','targetClass' => 'app\models\User'],
-            ['password_hash', 'string', 'min'=>2, 'max'=>10]
+            ['password_hash', 'string', 'min'=>2, 'max'=>10],
+
 
         ];
     }
@@ -46,4 +47,10 @@ class Signup extends Model
           'password_hash' => 'Пароль',
         ];
     }
+
+    public function validatePassword($attribute, $params)
+    {
+        $user = User::findOne(['email'=>$this->email]);
+    }
+
 }

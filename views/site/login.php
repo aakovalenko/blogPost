@@ -3,9 +3,9 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model app\models\LoginForm */
+use yii\bootstrap\ActiveForm;
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
@@ -24,13 +24,15 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?= $form->field($login_form, 'email')->textInput(['autofocus' => true]) ?>
 
-        <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($login_form, 'password_hash')->passwordInput() ?>
 
-        <?= $form->field($model, 'rememberMe')->checkbox([
+
+        <?= $form->field($login_form, 'rememberMe')->checkbox([
             'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
         ]) ?>
+
 
         <div class="form-group">
             <div class="col-lg-offset-1 col-lg-11">

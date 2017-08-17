@@ -13,6 +13,8 @@ use app\models\Signup;
 
 class SiteController extends Controller
 {
+
+
     /**
      * @inheritdoc
      */
@@ -50,7 +52,7 @@ class SiteController extends Controller
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                //'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
     }
@@ -62,6 +64,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        //var_dump(Yii::$app->user->identity); die();
+
         return $this->render('index');
     }
 
@@ -72,17 +76,42 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
+
+        $login_form = new LoginForm();
+
+        if(isset($_POST['LoginForm'])){
+            $login_form->attributes = $_POST['LoginForm'];
+
+            if($login_form->validate() && $login_form->login())
+                $this->redirect(Yii::app()->user->returnUrl);
+        }
+        $this->render('login',['login_form' => $login_form]);
+
+        /*
+        if(!Yii::$app->user->isGuest){
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        $login_form = new LoginForm();
+
+        if( Yii::$app->request->post('LoginForm'))
+        {
+            $login_form->attributes = Yii::$app->request->post('LoginForm');
+
+            if($login_form->validate())
+
+            {
+                Yii::$app->user->login($login_form->getUser());
+
+
+                return $this->goHome();
+
+            }
         }
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+
+
+        return $this->render('login', ['login_form' => $login_form]);
+        */
     }
 
     /**
@@ -92,9 +121,12 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
+        if(!Yii::$app->user->isGuest)
+        {
+            Yii::$app->user->logout();
 
-        return $this->goHome();
+            return $this->redirect(['login']);
+        }
     }
 
     /**
@@ -132,9 +164,10 @@ class SiteController extends Controller
 
         if(isset($_POST['Signup'])){
             $model->attributes = Yii::$app->request->post('Signup');
+
             if($model->validate() && $model->signup())
             {
-                return $this->goHome();
+                return $this->goHome(); //redirect(['index])
             }
         }
 

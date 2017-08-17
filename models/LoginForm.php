@@ -2,8 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
+
 
 /**
  * LoginForm is the model behind the login form.
@@ -13,69 +13,48 @@ use yii\base\Model;
  */
 class LoginForm extends Model
 {
-    public $username;
-    public $password;
+    public $email;
+    public $password_hash;
     public $rememberMe = true;
 
-    private $_user = false;
-
-
-    /**
-     * @return array the validation rules.
-     */
     public function rules()
     {
         return [
-            // username and password are both required
-            [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
-            ['password', 'validatePassword'],
+            [['email', 'password_hash'],'required'],
+            ['email','email'],
+            ['email','unique','targetClass' => 'app\models\LoginForm'],
+            ['password_hash', 'string', 'min'=>2, 'max'=>10],
+            ['password_hash', 'validatePassword'] //собственная функция для дальнейшего сравнения пароля
+
         ];
     }
 
-    /**
-     * Validates the password.
-     * This method serves as the inline validation for password.
-     *
-     * @param string $attribute the attribute currently being validated
-     * @param array $params the additional name-value pairs given in the rule
-     */
+    public function attributeLabels()
+    {
+        return [
+          'password_hash' => 'Пароль',
+        ];
+    }
+
     public function validatePassword($attribute, $params)
     {
-        if (!$this->hasErrors()) {
-            $user = $this->getUser();
+        if (!$this->hasErrors()) //если нет ошибок в валидации
+        {
 
-            if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+            $user = $this->getUser();// получаем пользователя для дальнейшего сравнения пароля
+
+            if(!$user || !$user->validatePassword($this->password_hash))
+            {
+               // если мы Не нашли в базе такого пользователя
+          //  или введенный пароль и пароль и пользователь в базе НЕ равны ТО
+                $this->addError($attribute, 'Пароль или пользователь введены неверно');
+                //добавляем новую ошибку для атрибута password_hash о том что пароль или емайл введены неверно
             }
         }
     }
 
-    /**
-     * Logs in a user using the provided username and password.
-     * @return bool whether the user is logged in successfully
-     */
-    public function login()
-    {
-        if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
-        }
-        return false;
-    }
-
-    /**
-     * Finds user by [[username]]
-     *
-     * @return User|null
-     */
     public function getUser()
     {
-        if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
-        }
-
-        return $this->_user;
+        return User::findOne(['email'=>$this->email]); //а получаем его по введеному емейлу
     }
 }
